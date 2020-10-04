@@ -141,6 +141,10 @@ module.exports = function (app) {
 
         dbo.collection('comments').insertOne({comment, bookid}, async(err, result)=>{
           if(err) throw err;
+          let totalComment = await dbo.collection('comments').countDocuments({bookid});
+          
+          (await dbo.collection('books').updateOne({_id: ObjectId(bookid)}, {$set: {commentcount: totalComment}}))
+
           let books = await dbo.collection('books').aggregate([
             {
               $match: {
